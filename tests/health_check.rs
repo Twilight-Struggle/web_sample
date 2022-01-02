@@ -1,5 +1,6 @@
 use std::net::TcpListener;
 use anisoc::run;
+use std::collections::HashMap;
 
 fn spawn_app() -> String {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
@@ -31,6 +32,7 @@ async fn health_check_works() {
 }
 
 use uuid::Uuid;
+use anisoc::MakeResult;
 #[actix_rt::test]
 async fn make_works() {
     // Arrange
@@ -48,32 +50,45 @@ async fn make_works() {
     // Assert
     assert!(response.status().is_success());
     
-    let response_json = response.json::<Uuid>().await.expect("Not a JSON");
+    let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
 
     println!("Uuid is {:?}", response_json);
 }
 
-// use anisoc::Board;
 
-// #[actix_rt::test]
-// async fn reset_works() {
-//     // Arrange
-//     let address = spawn_app();
-//     let client = reqwest::Client::new();
-
-//     // Act
-//     let response = client
-//         // Use the returned application address
-//         .post(&format!("{}/reset", &address))
-//         .send()
-//         .await
-//         .expect("Failed to execute request.");
-
-//     // Assert
-//     assert!(response.status().is_success());
+#[actix_rt::test]
+async fn reset_works() {
+    // Arrange
+    let address = spawn_app();
+    let client = reqwest::Client::new();
     
-//     let response_json = response.json::<Board>().await.expect("Not a JSON");
+    let response = client
+        // Use the returned application address
+        .post(&format!("{}/make", &address))
+        .send()
+        .await
+        .expect("Failed to execute request.");
 
-//     let board = Board { cells: vec![true, false, false] };
-//     assert_eq!(response_json.cells, board.cells);
-// }
+    let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
+    let ref_board = response_json.board;
+    let id = response_json.id;
+    
+    // reset送信
+    let mut map = HashMap::new();
+    map.insert("id", id);
+    let response = client
+        // Use the returned application address
+        .post(&format!("{}/reset", &address))
+        .json(&map)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    // Assert
+    assert!(response.status().is_success());
+    
+    let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
+
+    assert_eq!(id, response_json.id);
+    assert_eq!(ref_board, response_json.board);
+}

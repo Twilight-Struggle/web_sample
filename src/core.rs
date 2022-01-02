@@ -1,4 +1,5 @@
-#[derive(Clone)]
+use serde::{Serialize, Deserialize};
+#[derive(PartialEq, Eq, Debug, Clone, Serialize, Deserialize)]
 pub struct Board {
     cells: Vec<bool>
 }
