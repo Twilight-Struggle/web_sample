@@ -16,3 +16,4 @@
 
 ### ボード状態の管理
 actix-webは多数のスレッドをたちあげる模様。この場合ボードロジックは複数作る？
+→acitx-webのShared Mutable StateとHashMapを組み合わせる。Uuidごとにロジックインスタンスを紐付け
