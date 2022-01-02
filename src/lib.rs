@@ -15,17 +15,38 @@ struct GameManeger {
     games: Mutex<HashMap<Uuid, core::Board>>
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MakeResult {
+    pub id: Uuid,
+    pub board: core::Board
+}
+
 #[post("/make")]
 async fn make(data: web::Data<GameManeger>) -> HttpResponse {
     let mut games = data.games.lock().unwrap();
     let new_id = Uuid::new_v4();
-    (*games).insert(new_id, core::Board::new());
-    HttpResponse::Ok().json(new_id)
+    let board = core::Board::new();
+    games.insert(new_id, board.clone());
+    HttpResponse::Ok().json(MakeResult {
+        id: new_id,
+        board: board
+    })
+}
+
+#[derive(Deserialize)]
+pub struct Info {
+    id: Uuid
 }
 
 #[post("/reset")]
-async fn reset(data: web::Data<core::Board>) -> HttpResponse {
-    HttpResponse::Ok().finish()
+async fn reset(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpResponse {
+    let games = data.games.lock().unwrap();
+    let board = games.get(&info.id).unwrap();
+    let board = board.reset();
+    HttpResponse::Ok().json(MakeResult {
+        id: info.id,
+        board: board
+    })
 }
 
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
