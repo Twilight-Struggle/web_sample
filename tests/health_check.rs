@@ -29,3 +29,28 @@ async fn health_check_works() {
     assert!(response.status().is_success());
     assert_eq!(Some(0), response.content_length());
 }
+
+use anisoc::Board;
+
+#[actix_rt::test]
+async fn reset_works() {
+    // Arrange
+    let address = spawn_app();
+    let client = reqwest::Client::new();
+
+    // Act
+    let response = client
+        // Use the returned application address
+        .post(&format!("{}/reset", &address))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    // Assert
+    assert!(response.status().is_success());
+    
+    let response_json = response.json::<Board>().await.expect("Not a JSON");
+
+    let board = Board { cells: vec![true, false, false] };
+    assert_eq!(response_json.cells, board.cells);
+}
