@@ -13,3 +13,6 @@
 `/app/reset`→{ 初期状態にする; return 盤面JSON}
 
 `app/move`{return 移動JSON}→{ return Option(盤面JSON)}
+
+### ボード状態の管理
+actix-webは多数のスレッドをたちあげる模様。この場合ボードロジックは複数作る？
