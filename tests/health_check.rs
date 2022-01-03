@@ -92,3 +92,31 @@ async fn reset_works() {
     assert_eq!(id, response_json.id);
     assert_eq!(ref_board, response_json.board);
 }
+
+#[actix_rt::test]
+async fn reset_dont_works() {
+    // Arrange
+    let address = spawn_app();
+    let client = reqwest::Client::new();
+    
+    let response = client
+        // Use the returned application address
+        .post(&format!("{}/make", &address))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+    
+    // reset送信
+    let mut map = HashMap::new();
+    map.insert("id", "bad request");
+    let response = client
+        // Use the returned application address
+        .post(&format!("{}/reset", &address))
+        .json(&map)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    // Assert
+    assert!(!response.status().is_success());
+}
