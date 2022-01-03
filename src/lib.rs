@@ -41,12 +41,16 @@ pub struct Info {
 #[post("/reset")]
 async fn reset(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpResponse {
     let games = data.games.lock().unwrap();
-    let board = games.get(&info.id).unwrap();
-    let board = board.reset();
-    HttpResponse::Ok().json(MakeResult {
-        id: info.id,
-        board: board
-    })
+    match games.get(&info.id) {
+        Some(board) => {
+            let board = board.reset();
+            HttpResponse::Ok().json(MakeResult {
+                id: info.id,
+                board: board
+            })
+        },
+        None => HttpResponse::BadRequest().json("test")
+    }
 }
 
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
