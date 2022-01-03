@@ -31,7 +31,6 @@ async fn health_check_works() {
     assert_eq!(Some(0), response.content_length());
 }
 
-use uuid::Uuid;
 use anisoc::MakeResult;
 #[actix_rt::test]
 async fn make_works() {
@@ -55,7 +54,7 @@ async fn make_works() {
     println!("Uuid is {:?}", response_json);
 }
 
-
+use anisoc::Info;
 #[actix_rt::test]
 async fn reset_works() {
     // Arrange
@@ -74,8 +73,11 @@ async fn reset_works() {
     let id = response_json.id;
     
     // reset送信
-    let mut map = HashMap::new();
-    map.insert("id", id);
+    let map = Info {
+        id: id,
+        from: 0,
+        to: 0
+    };
     let response = client
         // Use the returned application address
         .post(&format!("{}/reset", &address))
@@ -98,13 +100,6 @@ async fn reset_dont_works() {
     // Arrange
     let address = spawn_app();
     let client = reqwest::Client::new();
-    
-    let response = client
-        // Use the returned application address
-        .post(&format!("{}/make", &address))
-        .send()
-        .await
-        .expect("Failed to execute request.");
     
     // reset送信
     let mut map = HashMap::new();
