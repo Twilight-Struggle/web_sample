@@ -18,7 +18,8 @@ struct GameManeger {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MakeResult {
     pub id: Uuid,
-    pub board: core::Board
+    pub board: core::Board,
+    pub res: String
 }
 
 #[post("/make")]
@@ -29,7 +30,8 @@ async fn make(data: web::Data<GameManeger>) -> HttpResponse {
     games.insert(new_id, board.clone());
     HttpResponse::Ok().json(MakeResult {
         id: new_id,
-        board: board
+        board: board,
+        res: "made".to_string()
     })
 }
 
@@ -48,10 +50,33 @@ async fn reset(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpRespo
             let board = board.reset();
             HttpResponse::Ok().json(MakeResult {
                 id: info.id,
-                board: board
+                board: board,
+                res: "reseted".to_string()
             })
         },
-        None => HttpResponse::BadRequest().json("test")
+        None => HttpResponse::BadRequest().finish()
+    }
+}
+
+#[post("/mov")]
+async fn mov(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpResponse {
+    let games = data.games.lock().unwrap();
+    match games.get(&info.id) {
+        Some(board) => {
+            match board.idou(info.from, info.to) {
+                Some(board_next) => HttpResponse::Ok().json(MakeResult {
+                    id: info.id,
+                    board: board_next,
+                    res: "OK move".to_string()
+                }),
+                None => HttpResponse::Ok().json(MakeResult {
+                    id: info.id,
+                    board: board.clone(),
+                    res: "NG move".to_string()
+                })
+            }
+        },
+        None => HttpResponse::BadRequest().finish()
     }
 }
 
@@ -63,8 +88,9 @@ pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
         App::new()
             .app_data(gamemaneger.clone())
             .route("/health_check", web::get().to(health_check))
-            .service(reset)
             .service(make)
+            .service(reset)
+            .service(mov)
         })
         .listen(listener)?
         .run();

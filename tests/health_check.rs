@@ -93,6 +93,7 @@ async fn reset_works() {
 
     assert_eq!(id, response_json.id);
     assert_eq!(ref_board, response_json.board);
+    assert_eq!("reseted".to_string(), response_json.res);
 }
 
 #[actix_rt::test]
@@ -114,4 +115,86 @@ async fn reset_dont_works() {
 
     // Assert
     assert!(!response.status().is_success());
+}
+
+#[actix_rt::test]
+async fn mov_works() {
+    // Arrange
+    let address = spawn_app();
+    let client = reqwest::Client::new();
+    
+    let response = client
+        // Use the returned application address
+        .post(&format!("{}/make", &address))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
+    let ref_board = response_json.board;
+    let id = response_json.id;
+    
+    // reset送信
+    let map = Info {
+        id: id,
+        from: 0,
+        to: 1
+    };
+    let response = client
+        // Use the returned application address
+        .post(&format!("{}/mov", &address))
+        .json(&map)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    // Assert
+    assert!(response.status().is_success());
+    
+    let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
+
+    assert_eq!(id, response_json.id);
+    assert_ne!(ref_board, response_json.board);
+    assert_eq!("OK move".to_string(), response_json.res);
+}
+
+#[actix_rt::test]
+async fn mov_dont_works() {
+    // Arrange
+    let address = spawn_app();
+    let client = reqwest::Client::new();
+    
+    let response = client
+        // Use the returned application address
+        .post(&format!("{}/make", &address))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
+    let ref_board = response_json.board;
+    let id = response_json.id;
+    
+    // reset送信
+    let map = Info {
+        id: id,
+        from: 0,
+        to: 2
+    };
+    let response = client
+        // Use the returned application address
+        .post(&format!("{}/mov", &address))
+        .json(&map)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    // Assert
+    assert!(response.status().is_success());
+    
+    let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
+
+    assert_eq!(id, response_json.id);
+    assert_eq!(ref_board, response_json.board);
+    assert_eq!("NG move".to_string(), response_json.res);
 }

@@ -16,7 +16,7 @@ impl Board {
         }
     }
     pub fn idou(&self, from: usize, to: usize) -> Option<Board> {
-        if self.cells[from] {
+        if !self.cells[from] {
             None
         }
         else {
