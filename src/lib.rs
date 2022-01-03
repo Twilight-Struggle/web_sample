@@ -33,9 +33,11 @@ async fn make(data: web::Data<GameManeger>) -> HttpResponse {
     })
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Info {
-    id: Uuid
+    pub id: Uuid,
+    pub from: usize,
+    pub to: usize
 }
 
 #[post("/reset")]
