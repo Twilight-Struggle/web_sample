@@ -22,6 +22,12 @@ pub struct MakeResult {
     pub res: String
 }
 
+#[tracing::instrument(
+    skip(data),
+    fields(
+        request_id = %Uuid::new_v4(),
+    )
+)]
 #[post("/make")]
 async fn make(data: web::Data<GameManeger>) -> HttpResponse {
     let mut games = data.games.lock().unwrap();
@@ -35,13 +41,19 @@ async fn make(data: web::Data<GameManeger>) -> HttpResponse {
     })
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Info {
     pub id: Uuid,
     pub from: usize,
     pub to: usize
 }
 
+#[tracing::instrument(
+    skip(data),
+    fields(
+        request_id = %Uuid::new_v4(),
+    )
+)]
 #[post("/reset")]
 async fn reset(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpResponse {
     let games = data.games.lock().unwrap();
@@ -58,6 +70,12 @@ async fn reset(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpRespo
     }
 }
 
+#[tracing::instrument(
+    skip(data),
+    fields(
+        request_id = %Uuid::new_v4(),
+    )
+)]
 #[post("/mov")]
 async fn mov(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpResponse {
     let games = data.games.lock().unwrap();
