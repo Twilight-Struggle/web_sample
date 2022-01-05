@@ -1,3 +1,5 @@
+pub mod telemetry;
+
 use actix_web::dev::Server;
 use actix_web::{post, web, App, HttpResponse, HttpServer};
 use std::net::TcpListener;
