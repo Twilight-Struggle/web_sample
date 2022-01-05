@@ -1,8 +1,21 @@
 use std::net::TcpListener;
 use anisoc::run;
 use std::collections::HashMap;
+use once_cell::sync::Lazy;
+use anisoc::telemetry::init_subscriber;
+
+static TRACING: Lazy<()> = Lazy::new(|| {
+    if std::env::var("TEST_LOG").is_ok() {
+        init_subscriber(std::io::stdout);
+    }
+    else {
+        init_subscriber(std::io::sink);
+    }
+    
+});
 
 fn spawn_app() -> String {
+    Lazy::force(&TRACING);
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     // We retrieve the port assigned to us by the OS
     let port = listener.local_addr().unwrap().port();
