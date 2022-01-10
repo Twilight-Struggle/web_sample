@@ -2,26 +2,26 @@ pub mod telemetry;
 
 use actix_web::dev::Server;
 use actix_web::{post, web, App, HttpResponse, HttpServer};
+use serde::{Deserialize, Serialize};
 use std::net::TcpListener;
-use serde::{Serialize, Deserialize};
 mod core;
+use std::collections::HashMap;
 use std::sync::Mutex;
 use uuid::Uuid;
-use std::collections::HashMap;
 
 async fn health_check() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
 struct GameManeger {
-    games: Mutex<HashMap<Uuid, core::Board>>
+    games: Mutex<HashMap<Uuid, core::Board>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MakeResult {
     pub id: Uuid,
     pub board: core::Board,
-    pub res: String
+    pub res: String,
 }
 
 #[allow(clippy::async_yields_async)]
@@ -40,7 +40,7 @@ async fn make(data: web::Data<GameManeger>) -> HttpResponse {
     HttpResponse::Ok().json(MakeResult {
         id: new_id,
         board,
-        res: "made".to_string()
+        res: "made".to_string(),
     })
 }
 
@@ -48,7 +48,7 @@ async fn make(data: web::Data<GameManeger>) -> HttpResponse {
 pub struct Info {
     pub id: Uuid,
     pub from: usize,
-    pub to: usize
+    pub to: usize,
 }
 
 #[allow(clippy::async_yields_async)]
@@ -68,10 +68,10 @@ async fn reset(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpRespo
             HttpResponse::Ok().json(MakeResult {
                 id: info.id,
                 board,
-                res: "reseted".to_string()
+                res: "reseted".to_string(),
             })
-        },
-        None => HttpResponse::BadRequest().finish()
+        }
+        None => HttpResponse::BadRequest().finish(),
     }
 }
 
@@ -86,34 +86,36 @@ async fn reset(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpRespo
 async fn mov(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpResponse {
     let mut games = data.games.lock().unwrap();
     match games.get(&info.id) {
-        Some(board) => {
-            match board.idou(info.from, info.to) {
-                Some(board_next) => {
-                    games.insert(info.id, board_next.clone());
-                    let goaled = if board_next.goaled() {"Goal!"} else {"OK move"};
-                    HttpResponse::Ok().json(MakeResult {
-                        id: info.id,
-                        board: board_next,
-                        res: goaled.to_string()
-                    })
-                },
-                None => {
-                    let goaled = if board.goaled() {"Goal!"} else {"NG move"};
-                    HttpResponse::Ok().json(MakeResult {
-                        id: info.id,
-                        board: board.clone(),
-                        res: goaled.to_string()
-                    })
-                }
+        Some(board) => match board.idou(info.from, info.to) {
+            Some(board_next) => {
+                games.insert(info.id, board_next.clone());
+                let goaled = if board_next.goaled() {
+                    "Goal!"
+                } else {
+                    "OK move"
+                };
+                HttpResponse::Ok().json(MakeResult {
+                    id: info.id,
+                    board: board_next,
+                    res: goaled.to_string(),
+                })
+            }
+            None => {
+                let goaled = if board.goaled() { "Goal!" } else { "NG move" };
+                HttpResponse::Ok().json(MakeResult {
+                    id: info.id,
+                    board: board.clone(),
+                    res: goaled.to_string(),
+                })
             }
         },
-        None => HttpResponse::BadRequest().finish()
+        None => HttpResponse::BadRequest().finish(),
     }
 }
 
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
     let gamemaneger = web::Data::new(GameManeger {
-        games: Mutex::new(HashMap::new())
+        games: Mutex::new(HashMap::new()),
     });
     let server = HttpServer::new(move || {
         App::new()
@@ -122,8 +124,8 @@ pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
             .service(make)
             .service(reset)
             .service(mov)
-        })
-        .listen(listener)?
-        .run();
+    })
+    .listen(listener)?
+    .run();
     Ok(server)
 }

@@ -1,6 +1,6 @@
-use std::net::TcpListener;
 use anisoc::run;
 use anisoc::telemetry::init_subscriber;
+use std::net::TcpListener;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
