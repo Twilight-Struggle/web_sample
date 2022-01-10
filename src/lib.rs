@@ -24,6 +24,7 @@ pub struct MakeResult {
     pub res: String
 }
 
+#[allow(clippy::async_yields_async)]
 #[tracing::instrument(
     skip(data),
     fields(
@@ -38,7 +39,7 @@ async fn make(data: web::Data<GameManeger>) -> HttpResponse {
     games.insert(new_id, board.clone());
     HttpResponse::Ok().json(MakeResult {
         id: new_id,
-        board: board,
+        board,
         res: "made".to_string()
     })
 }
@@ -50,6 +51,7 @@ pub struct Info {
     pub to: usize
 }
 
+#[allow(clippy::async_yields_async)]
 #[tracing::instrument(
     skip(data),
     fields(
@@ -65,7 +67,7 @@ async fn reset(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpRespo
             games.insert(info.id, board.clone());
             HttpResponse::Ok().json(MakeResult {
                 id: info.id,
-                board: board,
+                board,
                 res: "reseted".to_string()
             })
         },
@@ -73,6 +75,7 @@ async fn reset(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpRespo
     }
 }
 
+#[allow(clippy::async_yields_async)]
 #[tracing::instrument(
     skip(data),
     fields(

@@ -87,7 +87,7 @@ async fn reset_works() {
     
     // reset送信
     let map = Info {
-        id: id,
+        id,
         from: 0,
         to: 0
     };
@@ -149,7 +149,7 @@ async fn mov_works() {
     
     // reset送信
     let map = Info {
-        id: id,
+        id,
         from: 0,
         to: 1
     };
@@ -190,7 +190,7 @@ async fn mov_dont_works() {
     
     // reset送信
     let map = Info {
-        id: id,
+        id,
         from: 0,
         to: 2
     };

@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-#[derive(PartialEq, Eq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Board {
     cells: Vec<bool>
 }
@@ -19,23 +19,16 @@ impl Board {
         if !self.cells[from] {
             None
         }
+        else if to > from && to - from == 1 && 2 >= from && 2 >= to {
+            let mut cells = vec![false, false, false];
+            cells[to] = true;
+            Some(Board {cells})
+        }
         else {
-            if to > from && to - from == 1 && 2 >= from && 2 >= to {
-                let mut cells = vec![false, false, false];
-                cells[to] = true;
-                Some(Board {cells: cells})
-            }
-            else {
-                None
-            }
+            None
         }
     }
     pub fn goaled(&self) -> bool {
-        if self.cells[2] {
-            true
-        }
-        else {
-            false
-        }
+        self.cells[2]
     }
 }
