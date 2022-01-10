@@ -20,7 +20,7 @@ impl Board {
             None
         }
         else {
-            if to - from == 1 && 2 >= from && 2 >= to {
+            if to > from && to - from == 1 && 2 >= from && 2 >= to {
                 let mut cells = vec![false, false, false];
                 cells[to] = true;
                 Some(Board {cells: cells})
@@ -28,6 +28,14 @@ impl Board {
             else {
                 None
             }
+        }
+    }
+    pub fn goaled(&self) -> bool {
+        if self.cells[2] {
+            true
+        }
+        else {
+            false
         }
     }
 }

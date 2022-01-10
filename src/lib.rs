@@ -58,10 +58,11 @@ pub struct Info {
 )]
 #[post("/reset")]
 async fn reset(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpResponse {
-    let games = data.games.lock().unwrap();
+    let mut games = data.games.lock().unwrap();
     match games.get(&info.id) {
         Some(board) => {
             let board = board.reset();
+            games.insert(info.id, board.clone());
             HttpResponse::Ok().json(MakeResult {
                 id: info.id,
                 board: board,
@@ -80,20 +81,27 @@ async fn reset(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpRespo
 )]
 #[post("/mov")]
 async fn mov(info: web::Json<Info>, data: web::Data<GameManeger>) -> HttpResponse {
-    let games = data.games.lock().unwrap();
+    let mut games = data.games.lock().unwrap();
     match games.get(&info.id) {
         Some(board) => {
             match board.idou(info.from, info.to) {
-                Some(board_next) => HttpResponse::Ok().json(MakeResult {
-                    id: info.id,
-                    board: board_next,
-                    res: "OK move".to_string()
-                }),
-                None => HttpResponse::Ok().json(MakeResult {
-                    id: info.id,
-                    board: board.clone(),
-                    res: "NG move".to_string()
-                })
+                Some(board_next) => {
+                    games.insert(info.id, board_next.clone());
+                    let goaled = if board_next.goaled() {"Goal!"} else {"OK move"};
+                    HttpResponse::Ok().json(MakeResult {
+                        id: info.id,
+                        board: board_next,
+                        res: goaled.to_string()
+                    })
+                },
+                None => {
+                    let goaled = if board.goaled() {"Goal!"} else {"NG move"};
+                    HttpResponse::Ok().json(MakeResult {
+                        id: info.id,
+                        board: board.clone(),
+                        res: goaled.to_string()
+                    })
+                }
             }
         },
         None => HttpResponse::BadRequest().finish()
