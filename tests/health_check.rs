@@ -1,17 +1,15 @@
-use std::net::TcpListener;
 use anisoc::run;
-use std::collections::HashMap;
-use once_cell::sync::Lazy;
 use anisoc::telemetry::init_subscriber;
+use once_cell::sync::Lazy;
+use std::collections::HashMap;
+use std::net::TcpListener;
 
 static TRACING: Lazy<()> = Lazy::new(|| {
     if std::env::var("TEST_LOG").is_ok() {
         init_subscriber(std::io::stdout);
-    }
-    else {
+    } else {
         init_subscriber(std::io::sink);
     }
-    
 });
 
 fn spawn_app() -> String {
@@ -61,7 +59,7 @@ async fn make_works() {
 
     // Assert
     assert!(response.status().is_success());
-    
+
     let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
 
     println!("Uuid is {:?}", response_json);
@@ -73,7 +71,7 @@ async fn reset_works() {
     // Arrange
     let address = spawn_app();
     let client = reqwest::Client::new();
-    
+
     let response = client
         // Use the returned application address
         .post(&format!("{}/make", &address))
@@ -84,13 +82,9 @@ async fn reset_works() {
     let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
     let ref_board = response_json.board;
     let id = response_json.id;
-    
+
     // reset送信
-    let map = Info {
-        id,
-        from: 0,
-        to: 0
-    };
+    let map = Info { id, from: 0, to: 0 };
     let response = client
         // Use the returned application address
         .post(&format!("{}/reset", &address))
@@ -101,7 +95,7 @@ async fn reset_works() {
 
     // Assert
     assert!(response.status().is_success());
-    
+
     let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
 
     assert_eq!(id, response_json.id);
@@ -114,7 +108,7 @@ async fn reset_dont_works() {
     // Arrange
     let address = spawn_app();
     let client = reqwest::Client::new();
-    
+
     // reset送信
     let mut map = HashMap::new();
     map.insert("id", "bad request");
@@ -135,7 +129,7 @@ async fn mov_works() {
     // Arrange
     let address = spawn_app();
     let client = reqwest::Client::new();
-    
+
     let response = client
         // Use the returned application address
         .post(&format!("{}/make", &address))
@@ -146,13 +140,9 @@ async fn mov_works() {
     let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
     let ref_board = response_json.board;
     let id = response_json.id;
-    
+
     // reset送信
-    let map = Info {
-        id,
-        from: 0,
-        to: 1
-    };
+    let map = Info { id, from: 0, to: 1 };
     let response = client
         // Use the returned application address
         .post(&format!("{}/mov", &address))
@@ -163,7 +153,7 @@ async fn mov_works() {
 
     // Assert
     assert!(response.status().is_success());
-    
+
     let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
 
     assert_eq!(id, response_json.id);
@@ -176,7 +166,7 @@ async fn mov_dont_works() {
     // Arrange
     let address = spawn_app();
     let client = reqwest::Client::new();
-    
+
     let response = client
         // Use the returned application address
         .post(&format!("{}/make", &address))
@@ -187,13 +177,9 @@ async fn mov_dont_works() {
     let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
     let ref_board = response_json.board;
     let id = response_json.id;
-    
+
     // reset送信
-    let map = Info {
-        id,
-        from: 0,
-        to: 2
-    };
+    let map = Info { id, from: 0, to: 2 };
     let response = client
         // Use the returned application address
         .post(&format!("{}/mov", &address))
@@ -204,7 +190,7 @@ async fn mov_dont_works() {
 
     // Assert
     assert!(response.status().is_success());
-    
+
     let response_json = response.json::<MakeResult>().await.expect("Not a JSON");
 
     assert_eq!(id, response_json.id);
