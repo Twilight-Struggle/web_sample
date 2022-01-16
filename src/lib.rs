@@ -1,3 +1,4 @@
+pub mod configuration;
 pub mod telemetry;
 
 use actix_web::dev::Server;
