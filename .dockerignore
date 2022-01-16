@@ -1,0 +1,6 @@
+.vscode/
+target/
+tests/
+Dockerfile
+README.md
+.gitignore
