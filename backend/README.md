@@ -27,6 +27,9 @@ logは`tracing`クレートを利用して作成した。
 
 ## フロントエンド
 reactを使用した。チュートリアルそのまんまなので特に言うことはない。
+CORS制限を回避するためには、reactのproxy機能を使用する。
+package.jsonにproxyとしてバックエンドのURLを指定する。
+https://reffect.co.jp/react/front-react-back-node
 
 # 継続的開発の枠組み
 dockerを利用したバックエンドのデプロイ→(フロントエンドのデプロイ)→両者含めたデプロイをローカルで行う。
@@ -36,9 +39,15 @@ dockerを利用したバックエンドのデプロイ→(フロントエンド�
 バックエンドデプロイ→フロントエンドデプロイ→統合してデプロイの計画
 
 ### バックエンドのデプロイ
-dockerと通常起動で許可するアドレスを変更する→docker ignoreファイル作成→ビルドステージとランタイムステージに分割
+dockerと通常起動で許可するアドレスを変更する→dockerignoreファイル作成→ビルドステージとランタイムステージに分割
 
 ### フロントエンドのデプロイ
+`npm run build`で生成されるbuildディレクトリをバックエンドから返せば良い。
+build以下のindex.html及びbuildディレクトリを返却するようにバックエンド側に設定する。
+https://zenn.dev/tminasen/articles/00c31072100e5d0e861f
+
+また先程のページも参考になる。
+https://reffect.co.jp/react/front-react-back-node
 
 ### フロントエンドバックエンドの統合
 
