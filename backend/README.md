@@ -41,7 +41,7 @@ dockerを利用したバックエンドのデプロイ→(フロントエンド�
 ### バックエンドのデプロイ
 dockerと通常起動で許可するアドレスを変更する→dockerignoreファイル作成→ビルドステージとランタイムステージに分割
 
-### フロントエンドのデプロイ
+### フロントエンドバックエンドの統合
 `npm run build`で生成されるbuildディレクトリをバックエンドから返せば良い。
 build以下のindex.html及びbuildディレクトリを返却するようにバックエンド側に設定する。
 https://zenn.dev/tminasen/articles/00c31072100e5d0e861f
@@ -49,7 +49,8 @@ https://zenn.dev/tminasen/articles/00c31072100e5d0e861f
 また先程のページも参考になる。
 https://reffect.co.jp/react/front-react-back-node
 
-### フロントエンドバックエンドの統合
+### フロントエンド + バックエンドのデプロイ
+[バックエンドのデプロイ](#バックエンドのデプロイ)にreactのビルドステージを追加し、ランタイムステージでコピーしてくれば良い。
 
 ### クラウドを利用してデプロイ
 GCP cloud run?
