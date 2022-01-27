@@ -5,6 +5,19 @@ WORKDIR /app
 COPY . .
 RUN cargo build --release
 
+# Frontend builder stage
+FROM node:16 AS frontbuilder
+
+WORKDIR /app
+COPY package*.json .
+RUN npm install
+
+COPY tsconfig.json .
+COPY src/ ./src
+COPY public/ ./public
+
+RUN npm run build
+
 # Runtime stage
 FROM debian:bullseye-slim AS runtime
 
@@ -18,6 +31,8 @@ RUN apt-get update -y \
 # Copy the compiled binary from the builder environment 
 # to our runtime environment
 COPY --from=builder /app/target/release/anisoc anisoc
+RUN mkdir target
+COPY --from=frontbuilder /app/build ./target/public
 # We need the configuration file at runtime!
 COPY configuration configuration
 ENV APP_ENVIRONMENT production
