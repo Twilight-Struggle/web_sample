@@ -10,7 +10,7 @@
 
 # 実装ステップ
 ## バックエンド
-`/app/reset`→{ 初期状態にする; return 盤面JSON}
+`/app/reset`→{初期状態にする; return 盤面JSON}
 
 `app/move`{return 移動JSON}→{ return Option(盤面JSON)}
 
@@ -51,6 +51,22 @@ https://reffect.co.jp/react/front-react-back-node
 
 ### フロントエンド + バックエンドのデプロイ
 [バックエンドのデプロイ](#バックエンドのデプロイ)にreactのビルドステージを追加し、ランタイムステージでコピーしてくれば良い。
+ビルドはトップディレクトリで以下のコマンドで実行できる。
+
+```sh
+$ docker build --tag anisoc --file Dockerfile .
+```
+
+実行は以下の通り
+```sh
+$ docker run -p 8000:8000 anisoc
+```
+
+ブラウザでlocalhost:8000にアクセスすれば実行できる。
 
 ### クラウドを利用してデプロイ
 GCP cloud run?
+ここは動物サッカー実装後に行う。
+
+## CI
+GitHub Actionを使用する。

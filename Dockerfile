@@ -2,19 +2,19 @@
 FROM rust:1.57.0 AS builder
 
 WORKDIR /app
-COPY . .
+COPY backend .
 RUN cargo build --release
 
 # Frontend builder stage
 FROM node:16 AS frontbuilder
 
 WORKDIR /app
-COPY package*.json .
+COPY frontend/package*.json .
 RUN npm install
 
-COPY tsconfig.json .
-COPY src/ ./src
-COPY public/ ./public
+COPY frontend/tsconfig.json .
+COPY frontend/src/ ./src
+COPY frontend/public/ ./public
 
 RUN npm run build
 
@@ -32,8 +32,8 @@ RUN apt-get update -y \
 # to our runtime environment
 COPY --from=builder /app/target/release/anisoc anisoc
 RUN mkdir target
-COPY --from=frontbuilder /app/build ./target/public
+COPY --from=frontbuilder /app/build target/public
 # We need the configuration file at runtime!
-COPY configuration configuration
+COPY backend/configuration configuration
 ENV APP_ENVIRONMENT production
 ENTRYPOINT ["./anisoc"]
