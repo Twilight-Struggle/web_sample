@@ -26,6 +26,7 @@ pub struct MakeResult {
     pub res: String,
 }
 
+#[get("/")]
 async fn index() -> actix_web::Result<NamedFile> {
     Ok(NamedFile::open("target/public/index.html")?)
 }
@@ -126,7 +127,7 @@ pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
     let server = HttpServer::new(move || {
         App::new()
             .route("/health_check", web::get().to(health_check))
-            .route("/", web::get().to(index))
+            .service(index)
             .app_data(gamemaneger.clone())
             .service(make)
             .service(reset)
