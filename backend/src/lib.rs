@@ -1,8 +1,14 @@
 pub mod configuration;
 pub mod telemetry;
 
+<<<<<<< HEAD
 use actix_web::dev::Server;
 use actix_web::{post, web, App, HttpResponse, HttpServer};
+=======
+use actix_files::NamedFile;
+use actix_web::dev::Server;
+use actix_web::{get, post, web, App, HttpResponse, HttpServer};
+>>>>>>> develop
 use serde::{Deserialize, Serialize};
 use std::net::TcpListener;
 mod core;
@@ -25,6 +31,14 @@ pub struct MakeResult {
     pub res: String,
 }
 
+<<<<<<< HEAD
+=======
+#[get("/")]
+async fn index() -> actix_web::Result<NamedFile> {
+    Ok(NamedFile::open("target/public/index.html")?)
+}
+
+>>>>>>> develop
 #[allow(clippy::async_yields_async)]
 #[tracing::instrument(
     skip(data),
@@ -120,11 +134,13 @@ pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
     });
     let server = HttpServer::new(move || {
         App::new()
-            .app_data(gamemaneger.clone())
             .route("/health_check", web::get().to(health_check))
+            .service(index)
+            .app_data(gamemaneger.clone())
             .service(make)
             .service(reset)
             .service(mov)
+            .service(actix_files::Files::new("", "target/public"))
     })
     .listen(listener)?
     .run();
