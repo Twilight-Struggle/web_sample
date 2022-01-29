@@ -72,3 +72,5 @@ GCP cloud run?
 
 ## CI
 GitHub Actionを使用する。
+codecovを使いcoverageテストを行った。
+フロントエンドのCIは準備中
