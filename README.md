@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/Twilight-Struggle/anisoc/branch/main/graph/badge.svg?token=QX2AV5UEFQ)](https://codecov.io/gh/Twilight-Struggle/anisoc)
+
 # 適当
 ## 見た目
 ■□□
