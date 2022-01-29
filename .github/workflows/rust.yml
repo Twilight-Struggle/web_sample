@@ -35,3 +35,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: cargo clippy -- -D warnings
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: cargo tarpaulin --ignore-tests --verbose --all-features --workspace --timeout 120 --out Xml
+
+      - uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
