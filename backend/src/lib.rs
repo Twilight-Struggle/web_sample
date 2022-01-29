@@ -1,14 +1,9 @@
 pub mod configuration;
 pub mod telemetry;
 
-<<<<<<< HEAD
-use actix_web::dev::Server;
-use actix_web::{post, web, App, HttpResponse, HttpServer};
-=======
 use actix_files::NamedFile;
 use actix_web::dev::Server;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer};
->>>>>>> develop
 use serde::{Deserialize, Serialize};
 use std::net::TcpListener;
 mod core;
@@ -31,14 +26,11 @@ pub struct MakeResult {
     pub res: String,
 }
 
-<<<<<<< HEAD
-=======
 #[get("/")]
 async fn index() -> actix_web::Result<NamedFile> {
     Ok(NamedFile::open("target/public/index.html")?)
 }
 
->>>>>>> develop
 #[allow(clippy::async_yields_async)]
 #[tracing::instrument(
     skip(data),
