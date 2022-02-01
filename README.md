@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/Twilight-Struggle/anisoc/branch/main/graph/badge.svg?token=QX2AV5UEFQ)](https://codecov.io/gh/Twilight-Struggle/anisoc)
+[![codecov](https://codecov.io/gh/Twilight-Struggle/web_sample/branch/main/graph/badge.svg?token=QX2AV5UEFQ)](https://codecov.io/gh/Twilight-Struggle/web_sample)
 
 # 適当
 
@@ -69,13 +69,13 @@ https://reffect.co.jp/react/front-react-back-node
 ビルドはトップディレクトリで以下のコマンドで実行できる。
 
 ```sh
-$ docker build --tag anisoc --file Dockerfile .
+$ docker build --tag web_sample --file Dockerfile .
 ```
 
 実行は以下の通り
 
 ```sh
-$ docker run -p 8000:8000 anisoc
+$ docker run -p 8000:8000 web_sample
 ```
 
 ブラウザで localhost:8000 にアクセスすれば実行できる。
