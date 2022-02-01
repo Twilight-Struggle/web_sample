@@ -30,10 +30,10 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/*
 # Copy the compiled binary from the builder environment 
 # to our runtime environment
-COPY --from=builder /app/target/release/anisoc anisoc
+COPY --from=builder /app/target/release/web_sample web_sample
 RUN mkdir target
 COPY --from=frontbuilder /app/build target/public
 # We need the configuration file at runtime!
 COPY backend/configuration configuration
 ENV APP_ENVIRONMENT production
-ENTRYPOINT ["./anisoc"]
+ENTRYPOINT ["./web_sample"]

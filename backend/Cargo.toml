@@ -1,5 +1,5 @@
 [package]
-name = "anisoc"
+name = "web_sample"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,7 +10,7 @@ path = "src/lib.rs"
 
 [[bin]]
 path = "src/main.rs"
-name = "anisoc"
+name = "web_sample"
 
 [dependencies]
 actix-web = "3.3.3"

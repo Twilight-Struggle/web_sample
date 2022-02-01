@@ -1,8 +1,8 @@
-use anisoc::run;
-use anisoc::telemetry::init_subscriber;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::net::TcpListener;
+use web_sample::run;
+use web_sample::telemetry::init_subscriber;
 
 static TRACING: Lazy<()> = Lazy::new(|| {
     if std::env::var("TEST_LOG").is_ok() {
@@ -42,7 +42,7 @@ async fn health_check_works() {
     assert_eq!(Some(0), response.content_length());
 }
 
-use anisoc::MakeResult;
+use web_sample::MakeResult;
 #[actix_rt::test]
 async fn make_works() {
     // Arrange
@@ -65,7 +65,7 @@ async fn make_works() {
     println!("Uuid is {:?}", response_json);
 }
 
-use anisoc::Info;
+use web_sample::Info;
 #[actix_rt::test]
 async fn reset_works() {
     // Arrange
